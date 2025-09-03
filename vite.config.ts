@@ -15,5 +15,6 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  base: '/app-trelly/'
 });
 
