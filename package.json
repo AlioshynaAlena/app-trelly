@@ -1,6 +1,7 @@
 {
     "name": "trello-app",
     "private": true,
+    "homepage": "https://AlioshynaAlena.github.io/app-trelly",
     "version": "0.0.0",
     "type": "module",
     "scripts": {
