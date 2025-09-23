@@ -1,4 +1,3 @@
-import type { Task } from "./types";
 import { api } from "./api";
 import { useQuery } from "./hooks/utils/useQuery";
 
@@ -7,51 +6,48 @@ type Props = {
   boardId: string | null;
 };
 
-function useTaskDetail(taskId: string | null, boardId: string | null) {
-  const { status: detailQueryStatus, data: task } = useQuery<Task>({
-    queryStatusDefault: "pending",
-    queryKeys: [taskId!, boardId!],
-    skip: !taskId || !boardId,
-    queryFn: () => {
-      return api
-        .getTask(taskId!, boardId! /*abortControllerRef.current!.signal*/)
-        .then((json) => json.data);
-    },
-  });
+// function useTaskDetail(taskId: string | null, boardId: string | null) {
+//   const { status: detailQueryStatus, data: task } = useQuery<Task>({
+//     queryStatusDefault: "pending",
+//     queryKeys: [taskId!, boardId!],
+//     skip: !taskId || !boardId,
+//     queryFn: () => {
+//       return api
+//         .getTask(taskId!, boardId! /*abortControllerRef.current!.signal*/)
+//         .then((json) => json.data);
+//     },
+//   });
 
-  return {
-    detailQueryStatus,
-    task: task,
-  };
-}
+//   return {
+//     detailQueryStatus,
+//     task: task,
+//   };
+// }
 
 export function TaskDetail(props: Props) {
-  const { detailQueryStatus, task } = useTaskDetail(
-    props.taskId,
-    props.boardId
-  );
+  const {data, status} = useQuery({
+    queryFn: ({signal}) => {
+      return api.getTask(props.taskId!, props.boardId!, signal)
+    },
+    enabled: Boolean(props.taskId && props.boardId ),
+    queryKey: ['task', props.taskId, props.boardId]
+  })
 
-  if (detailQueryStatus === "pending") {
-    return <span>no task for display</span>;
-  }
 
-  if (detailQueryStatus === "loading") {
-    return <div>loading...</div>;
-  }
+  if (status === "pending") {return <span>no task for display</span>;}
 
-  if (!task) {
-    return <div>No task data</div>;
-  }
+  if (status === "loading") {return <div>loading...</div>;}
+
 
   return (
     <div>
       <h2>Details</h2>
-      <h4>Title: {task.attributes.title}</h4>
-      <h4>BoardId: {task.attributes.boardId}</h4>
-      <h4>Status: {task.attributes.status}</h4>
-      <h4>Priority: {task.attributes.priority}</h4>
-      <h4>Added ad: {task.attributes.addedAt}</h4>
-      <h4>Attachments Count:{task.attributes.attachmentsCount}</h4>
+      <h4>Title: {data!.data.attributes.title}</h4>
+      <h4>BoardId: {data!.data.attributes.boardId}</h4>
+      <h4>Status: {data!.data.attributes.status}</h4>
+      <h4>Priority: {data!.data.attributes.priority}</h4>
+      <h4>Added ad: {data!.data.attributes.addedAt}</h4>
+      <h4>Attachments Count:{data!.data.attributes.attachmentsCount}</h4>
     </div>
   );
 }

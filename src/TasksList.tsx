@@ -1,4 +1,4 @@
-import type { Task } from "./types";
+
 import { TaskListItem } from "./TaskListItem";
 import { api } from "./api";
 import { useQuery } from "./hooks/utils/useQuery";
@@ -9,35 +9,40 @@ type Props = {
 };
 
 //hook
-function useTasksList(onTaskSelect: (taskId: string, boardId: string) => void) {
-  const { status: listQueryStatus, data: tasks } = useQuery<Task[]>({
-    queryKeys: [],
-    queryFn: () => {
-      return api.getTasks().then((json) => json.data);
-    },
-  });
+// function useTasksList(onTaskSelect: (taskId: string, boardId: string) => void) {
+//   const { status: listQueryStatus, data: tasks } = useQuery<Task[]>({
+//     queryKeys: [],
+//     queryFn: () => {
+//       return api.getTasks().then((json) => json.data);
+//     },
+//   });
 
-  const handleSelect = (taskId: string, boardId: string) => {
-    // setSelectedTrackId(trackId)
-    //уведомлю родителя о том, что такой трек был выбран
-    onTaskSelect(taskId, boardId);
-  };
+//   const handleSelect = (taskId: string, boardId: string) => {
+//     // setSelectedTrackId(trackId)
+//     //уведомлю родителя о том, что такой трек был выбран
+//     onTaskSelect(taskId, boardId);
+//   };
 
-  return { tasks, listQueryStatus, handleSelect };
-}
+//   return { tasks, listQueryStatus, handleSelect };
+// }
 
 export function TasksList(props: Props) {
-  const { tasks, listQueryStatus, handleSelect } = useTasksList(
-    props.onTaskSelect
-  );
+  const { data, status } = useQuery({
+    queryFn: () => api.getTasks(),
+    queryKey: ['tasks']
+  })
 
-  if (listQueryStatus === "loading") {
+  if (status === "loading") {
     return <div>loading...</div>;
   }
 
+    const handleSelect = (taskId: string, boardId: string) => {
+    props.onTaskSelect(taskId, boardId);
+  };
+
   return (
     <ul>
-      {tasks?.map((t) => {
+      {data?.data.map((t) => {
         return (
           <TaskListItem
             key={t.id}
