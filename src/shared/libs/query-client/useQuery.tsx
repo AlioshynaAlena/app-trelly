@@ -48,15 +48,16 @@
 
 
 
-import {useEffect, useRef, useState} from "react";
-import type { Entry, QueryFnParams, QueryKey } from "../../query-client";
-import { queryClient } from "../../query-client-instance";
+import {useContext, useEffect, useRef, useState} from "react";
+import type {Entry, QueryFnParams, QueryKey} from "./query-client.ts";
 
+
+import {QueryClientContext} from "./QueryClientContext.tsx";
 
 
 type Options<T> = {
     queryFn: (params: QueryFnParams) => Promise<T>
-    enabled?: boolean
+    enabled?: boolean,
     queryKey: QueryKey
 }
 
@@ -70,6 +71,9 @@ export function useQuery<D>(options: Options<D>) {
     if (!queryKey) { // invariants checking
         throw new Error('queryKey is required')
     }
+
+    const queryClient = useContext(QueryClientContext);
+    if (!queryClient) throw new Error('query client must be inside context')
 
     const initEntry = queryClient.initEntry(queryKey, enabled);
 

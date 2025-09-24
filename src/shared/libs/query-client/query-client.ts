@@ -49,7 +49,7 @@ export class QueryClient {
 
     }
 
-    initEntry(queryKey: QueryKey, enabled: boolean ) {
+    initEntry(queryKey: QueryKey, enabled: boolean) {
         if (!this.cache.has(queryKey.toString())) {
             this.cache.set(queryKey.toString(), {
                 data: null,

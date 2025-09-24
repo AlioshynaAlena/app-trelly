@@ -1,40 +1,29 @@
-
+import { useQuery } from "@tanstack/react-query";
 import { TaskListItem } from "./TaskListItem";
-import { api } from "./api";
-import { useQuery } from "./hooks/utils/useQuery";
+import { client } from "./shared/api/client";
+
 
 type Props = {
   onTaskSelect: (taskId: string, boardId: string) => void;
   selectedTaskId: string | null;
 };
 
-//hook
-// function useTasksList(onTaskSelect: (taskId: string, boardId: string) => void) {
-//   const { status: listQueryStatus, data: tasks } = useQuery<Task[]>({
-//     queryKeys: [],
-//     queryFn: () => {
-//       return api.getTasks().then((json) => json.data);
-//     },
-//   });
-
-//   const handleSelect = (taskId: string, boardId: string) => {
-//     // setSelectedTrackId(trackId)
-//     //уведомлю родителя о том, что такой трек был выбран
-//     onTaskSelect(taskId, boardId);
-//   };
-
-//   return { tasks, listQueryStatus, handleSelect };
-// }
 
 export function TasksList(props: Props) {
-  const { data, status } = useQuery({
-    queryFn: () => api.getTasks(),
-    queryKey: ['tasks']
+  const { data, isPending, isError } = useQuery({
+    queryFn: async () => {
+      const clientData = await client.GET('/boards/tasks')
+            return clientData.data!
+    },
+    queryKey: ['tasks', 'list']
   })
 
-  if (status === "loading") {
+  if (isPending) {
     return <div>loading...</div>;
   }
+   if (isError) {
+        return <div>Can't load tracks list</div>
+    }
 
     const handleSelect = (taskId: string, boardId: string) => {
     props.onTaskSelect(taskId, boardId);
@@ -42,7 +31,7 @@ export function TasksList(props: Props) {
 
   return (
     <ul>
-      {data?.data.map((t) => {
+      {data.data.map((t) => {
         return (
           <TaskListItem
             key={t.id}

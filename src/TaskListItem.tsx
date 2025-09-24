@@ -1,7 +1,7 @@
-import type { Task } from "./types";
+import type { SchemaGlobalTaskListItemJsonApiData } from "./shared/api/schema";
 
 type Props = {
-  task: Task;
+  task: SchemaGlobalTaskListItemJsonApiData;
   isSelected: boolean;
   //функция, которая возвращает ничего, но должна принимать trackId
   onSelect: (taskId: string, boardId: string) => void;

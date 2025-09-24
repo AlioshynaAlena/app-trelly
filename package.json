@@ -10,10 +10,12 @@
         "lint": "eslint .",
         "preview": "vite preview",
         "predeploy": "pnpm run build",
-        "deploy": "gh-pages -d dist"
-
+        "deploy": "gh-pages -d dist",
+        "api-client-gen": "pnpm openapi-typescript https://trelly.it-incubator.app/api-json -o ./src/shared/api/schema.ts --root-types"
     },
     "dependencies": {
+        "@tanstack/react-query": "^5.90.2",
+        "openapi-fetch": "^0.14.0",
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
         "styled-components": "^6.1.19"
@@ -29,6 +31,7 @@
         "eslint-plugin-react-refresh": "^0.4.20",
         "gh-pages": "^6.3.0",
         "globals": "^16.3.0",
+        "openapi-typescript": "^7.9.1",
         "typescript": "~5.8.3",
         "typescript-eslint": "^8.39.1",
         "vite": "^7.1.2"
