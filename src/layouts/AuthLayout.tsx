@@ -22,7 +22,7 @@ const renderClassName = ({ isActive }: NavLinkRenderProps) =>
 //     )
 // }
 
-const renderNavbarMenuItem = (to, title) => {
+const renderNavbarMenuItem = (to:any, title:any) => {
     return (
         <NavLink className={({ isActive }) =>
             isActive ? styles.active : ""} to={to}>{title}</NavLink>
